@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards da Tabela Periódica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 3rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .flashcard-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .flashcard {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background-color: #6366f1;
+            color: white;
+            border-radius: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1.5;
+            padding: 1.5rem;
+        }
+        .flashcard-face-back {
+            transform: rotateY(180deg);
+            background-color: #3b82f6;
+            border-radius: 1rem;
+            font-size: 1.2rem;
+            padding: 1.5rem;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .nav-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        #prev-btn {
+            background-color: #9ca3af;
+        }
+        #prev-btn:hover {
+            background-color: #6b7280;
+        }
+        #next-btn {
+            background-color: #10b981;
+        }
+        #next-btn:hover {
+            background-color: #059669;
+        }
+        .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="container rounded-3xl shadow-xl p-8 bg-white max-w-2xl text-center">
+        <h1 class="text-4xl font-extrabold text-indigo-700 mb-6">Propriedades da Tabela Periódica</h1>
+        <div class="flashcard-container">
+            <div id="flashcard" class="flashcard">
+                <div id="front" class="flashcard-face flashcard-face-front"></div>
+                <div id="back" class="flashcard-face flashcard-face-back"></div>
+            </div>
+            <div class="nav-buttons">
+                <button id="prev-btn" class="nav-button rounded-full disabled:opacity-50 disabled:cursor-not-allowed">Anterior</button>
+                <button id="next-btn" class="nav-button rounded-full">Próximo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Array de flashcards
+        const flashcards = [
+            {
+                question: "O que é a Eletronegatividade?",
+                answer: "É a capacidade de um átomo de atrair elétrons em uma ligação química. Cresce da esquerda para a direita e de baixo para cima."
+            },
+            {
+                question: "O que é o Raio Atômico?",
+                answer: "É a metade da distância entre os núcleos de dois átomos idênticos ligados. Diminui da esquerda para a direita e de cima para baixo."
+            },
+            {
+                question: "O que é a Energia de Ionização?",
+                answer: "É a energia mínima necessária para remover um elétron de um átomo no estado gasoso. Cresce da esquerda para a direita e de baixo para cima."
+            },
+            {
+                question: "O que é a Eletropositividade?",
+                answer: "É a tendência de um átomo de liberar elétrons e se tornar um íon positivo. É o inverso da Eletronegatividade."
+            },
+            {
+                question: "Qual a tendência da Eletronegatividade em um grupo (coluna)?",
+                answer: "A Eletronegatividade geralmente diminui à medida que descemos em um grupo."
+            },
+            {
+                question: "Qual a tendência da Eletronegatividade em um período (linha)?",
+                answer: "A Eletronegatividade geralmente aumenta à medida que nos movemos da esquerda para a direita em um período."
+            },
+            {
+                question: "O que são os Períodos na Tabela Periódica?",
+                answer: "São as linhas horizontais da tabela periódica, indicando o número de camadas eletrônicas do átomo."
+            },
+            {
+                question: "O que são os Grupos ou Famílias?",
+                answer: "São as colunas verticais da tabela periódica, cujos elementos possuem propriedades químicas semelhantes."
+            }
+        ];
+
+        let currentCardIndex = 0;
+        const flashcardElement = document.getElementById('flashcard');
+        const frontElement = document.getElementById('front');
+        const backElement = document.getElementById('back');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+
+        // Função para virar o flashcard
+        flashcardElement.addEventListener('click', () => {
+            flashcardElement.classList.toggle('flipped');
+        });
+
+        // Função para mostrar o flashcard atual
+        const showCurrentCard = () => {
+            // Se o cartão estiver virado, desvira
+            flashcardElement.classList.remove('flipped');
+            frontElement.textContent = flashcards[currentCardIndex].question;
+            backElement.textContent = flashcards[currentCardIndex].answer;
+            updateButtons();
+        };
+
+        // Função para atualizar o estado dos botões
+        const updateButtons = () => {
+            prevButton.disabled = currentCardIndex === 0;
+            nextButton.disabled = currentCardIndex === flashcards.length - 1;
+        };
+
+        // Botão de voltar
+        prevButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Impede o clique de virar o cartão
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                showCurrentCard();
+            }
+        });
+
+        // Botão de avançar
+        nextButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Impede o clique de virar o cartão
+            if (currentCardIndex < flashcards.length - 1) {
+                currentCardIndex++;
+                showCurrentCard();
+            }
+        });
+
+        // Mostrar o primeiro flashcard ao carregar
+        showCurrentCard();
+    </script>
+</body>
+</html>
