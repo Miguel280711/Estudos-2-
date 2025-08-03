@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Índice de Matérias</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo para usar a fonte Inter */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Efeito de brilho sutil no hover */
+        .subject-button:hover {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white antialiased">
+
+    <!-- Container Principal -->
+    <div class="container mx-auto px-4 py-8 md:py-12">
+
+        <!-- Cabeçalho -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-100 mb-2">Flashcards de Miguel</h1>
+            <p class="text-lg text-gray-400">Navegue pelas matérias abaixo para acessar os materiais.</p>
+        </header>
+
+        <!-- Grade de Matérias -->
+        <main>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                
+                <!-- Array de matérias para gerar os botões dinamicamente -->
+                <script>
+                    const subjects = [
+                        { name: 'Sociologia', folder: 'sociologia', emoji: '👥' },
+                        { name: 'Química', folder: 'quimica', emoji: '🧪' },
+                        { name: 'Física', folder: 'fisica', emoji: '⚛️' },
+                        { name: 'História', folder: 'historia', emoji: '📜' },
+                        { name: 'Matemática', folder: 'matematica', emoji: '🧮' },
+                        { name: 'Gramática', folder: 'gramatica', emoji: '✍️' },
+                        { name: 'Redação', folder: 'redacao', emoji: '📝' },
+                        { name: 'Geografia', folder: 'geografia', emoji: '🗺️' },
+                        { name: 'Filosofia', folder: 'filosofia', emoji: '🤔' },
+                        { name: 'Arte', folder: 'arte', emoji: '🎨' },
+                        { name: 'Ens. Religioso', folder: 'ens-religioso', emoji: '🕊️' },
+                        { name: 'Ed. Física', folder: 'ed-fisica', emoji: '⚽' },
+                        { name: 'Biologia', folder: 'biologia', emoji: '🧬' },
+                        { name: 'Espanhol', folder: 'espanhol', emoji: '🇪🇸' },
+                        { name: 'Inglês', folder: 'ingles', emoji: '🇬🇧' }
+                    ];
+
+                    const grid = document.querySelector('.grid');
+
+                    // Ordena a lista de matérias em ordem alfabética pelo nome
+                    subjects.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+                    subjects.forEach(subject => {
+                        const buttonHTML = `
+                        <a href="./${subject.folder}/" class="subject-button bg-gray-800 border border-gray-700 rounded-lg p-6 flex flex-col items-center justify-center text-center transition-all duration-300 hover:bg-gray-700 hover:border-blue-500 hover:-translate-y-1">
+                            <div class="text-4xl mb-3">${subject.emoji}</div>
+                            <h2 class="text-xl font-semibold text-gray-200">${subject.name}</h2>
+                        </a>
+                        `;
+                        grid.innerHTML += buttonHTML;
+                    });
+                </script>
+
+            </div>
+        </main>
+
+        <!-- Rodapé -->
+        <footer class="text-center mt-12 text-gray-500">
+            <p>&copy; José Miguel</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
